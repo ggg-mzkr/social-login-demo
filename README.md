@@ -1,64 +1,80 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# Cognitoを使ったソーシャル認証のサンプル
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Cognitoの設定
 
-## About Laravel
+AWS コンソールからCognitoのユーザープールを作成する
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+<img width="2048" alt="cognito1" src="https://user-images.githubusercontent.com/22838387/133485256-4e297133-c70f-4b42-8766-1aba5522df1f.png">
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+プール名を入力し、「デフォルトを確認する」→「プールの作成」でユーザープールを作成する。
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+<img width="2048" alt="cognito2" src="https://user-images.githubusercontent.com/22838387/133485289-c984b4dd-3fd3-4ed1-984d-5968508e48ee.png">
 
-## Learning Laravel
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+左メニューの「アプリクライアント」からアプリクライアントを作成する。設定はデフォルト値のまま作成する。
+<img width="2048" alt="cognito3" src="https://user-images.githubusercontent.com/22838387/133485766-24052f4c-b303-4d6e-bcd0-0a69fe5c9d29.png">
 
-## Laravel Sponsors
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+左メニューの「アプリクライアントの設定」を開き、以下のように入力する。
+- コールバック URL: http://localhost/auth/callback
+- サインアウト URL: http://localhost/auth/logout
+- 許可されている OAuth フロー: Authorization code grant, Implicit grant
+- 許可されている OAuth スコープ, email, openid
 
-### Premium Partners
+<img width="2048" alt="cognito4" src="https://user-images.githubusercontent.com/22838387/133486890-ecf8d618-d81c-424b-87e7-afcd6dc9af0d.png">
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[CMS Max](https://www.cmsmax.com/)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
 
-## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+左メニューの「ドメイン名」から任意のドメイン名の登録を行う。
+<img width="2048" alt="cognito5" src="https://user-images.githubusercontent.com/22838387/133486911-8bf913b7-6129-4b64-8437-663e2005e726.png">
 
-## Code of Conduct
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## セットアップ
 
-## Security Vulnerabilities
+```shell
+$ git clone https://github.com/ggg-mzkr/social-login-demo.git
+$ cd social-login
+$ cp .env.example .env
+$ composer install
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+`.env`ファイルを更新する。
+CognitoのプールIDは左メニューの「全般設定」をから確認できる。プリクライアントのクライアントID、クライアントシークレットは左メニューの「アプリクライアント」から確認できる。
 
-## License
+```dotenv:.env
+...
+AWS_COGNITO_DOMAIN=<登録したドメイン>
+AWS_COGNITO_POOL_ID=<CognitoのプールID>
+AWS_COGNITO_CLIENT_ID=<アプリクライアントのクライアントID>
+AWS_COGNITO_CLIENT_SECRET=<アプリクライアントのクライアントシークレット>
+...
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## 動作確認
+
+サーバーを起動するし、`http://localhost`を開く。
+```shell
+$ sail up -d
+```
+
+
+次のような画面が表示されるので、右上の`Log in`ボタンをクリックする。
+
+<img width="2048" alt="run1" src="https://user-images.githubusercontent.com/22838387/133487879-eab0dbc9-ae71-42bc-a4a1-de45df1396f8.png">
+
+
+`Sigin up`のリンクから登録を行う。認証コードがメールで送信されるので、入力する。
+<img width="530" alt="run2" src="https://user-images.githubusercontent.com/22838387/133488019-ec91826b-2abe-486e-913d-47aafb81ca5b.png">
+
+認証が成功すると、アプリ側へリダイレクトされ、以下のようにCognitoから取得したユーザー情報がブラウザに表示される。
+```json
+{
+    "at_hash":"wyF309L-ZhkdHjTM44NDNw","sub":"1c5f6f9f-93a1-45ec-9a0c-ed64c9fb120c","email_verified":true,
+    "iss":"https:\/\/cognito-idp.ap-northeast-1.amazonaws.com\/ap-northeast-1_5Zn5hoc7t",
+    "cognito:username":"hoge","origin_jti":"a72d578f-fc8d-4046-b300-48a8d676cd95","aud":"5imbbd1ji2boe14epj2rf1afs2",
+    "event_id":"ef0c4134-e55c-433f-86a2-4d794f572965", "token_use":"id","auth_time":1631730393,"exp":1631733993,"iat":1631730393,
+    "jti":"54a06ff8-76ae-4dd4-85e6-d1eaa4e33524","email":"xxxx@example.co.jp"
+}
+```
